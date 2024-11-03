@@ -17,7 +17,6 @@ class SaleService
      */
     public function uploadCsv($file)
     {
-        // return $this -> processCSV($file);
         try {
             // method 1 - upload the file to storage folder and read the file
             // $filePath = $file->store('csv_uploads');
@@ -55,28 +54,36 @@ class SaleService
      * @param [type] $file
      * @return void
      */
-    public function processCSV($file){
-        $filePath = $file->store('csv_uploads');
-        $batch = Bus::batch([])->dispatch();
-        $jobs = [];
-        $chunkSize = 500;
+    // public function processCSV($file){
+    //     $filePath = $file->store('csv_uploads');
+    //     $batch = Bus::batch([])->dispatch();
+    //     $jobs = [];
+    //     $chunkSize = 500;
 
-        LazyCollection::make(function () use ($filePath) {
-            $file = Storage::path($filePath);
-            return fopen($file, 'r');
-        })->chunk($chunkSize)->each(function ($lines) use (&$jobs) {
-            $data = $lines->map(function ($line) {
-                return str_getcsv($line);
-            })->toArray();
+    //     LazyCollection::make(function () use ($filePath) {
+    //         $file = fopen(Storage::path($filePath), 'r');
 
-            $jobs[] = new SalesCsvProcess($data);
-        });
+    //         // Loop through each line until EOF
+    //         while (($line = fgetcsv($file)) !== false) {
+    //             yield $line;
+    //         }
 
-        $batch->add($jobs);
+    //         // Close the file after reading
+    //         fclose($file);
+    //     })->chunk($chunkSize)
+    //       ->each(function ($lines) use (&$jobs) {
+    //           // Convert chunked lines into array format
+    //           $data = $lines->toArray();
 
-        return ['status' => true, 'message' => 'CSV file has been uploaded successfully.', 'data' => $batch->id ?? null];
+    //           // Create a job with the chunk of data
+    //           $jobs[] = new SalesCsvProcess($data);
+    //     });
 
-    }
+    //     $batch->add($jobs);
+
+    //     return ['status' => true, 'message' => 'CSV file has been uploaded successfully.', 'data' => $batch->id ?? null];
+
+    // }
     /**
      * getBatch function
      *
