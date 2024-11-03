@@ -45,11 +45,37 @@ php artisan queue:work
 bulk email send
 
 php artisan make:controller EmailController --resource
+
 php artisan make:request uploadEmailFileRequest
+
 php artisan make:class Services/EmailService
+
 php artisan make:job SendEmailJob
+
 php artisan make:mail SendUserMail
+
 php artisan make:view emails/index
+
 php artisan make:view emails/create
+
 php artisan make:email emails/mail-template
+
 php artisan make:view emails/mail-template
+
+
+### job file needed
+
+- use Throwable;
+- use Illuminate\Bus\Batchable;
+- use Illuminate\Bus\Queueable;
+- use Illuminate\Queue\SerializesModels;
+- use Illuminate\Queue\InteractsWithQueue;
+- use Illuminate\Contracts\Queue\ShouldQueue;
+- use Illuminate\Foundation\Bus\Dispatchable;
+- use Illuminate\Support\Facades\DB;
+
+### controller or service file needed
+
+- use App\Jobs\SalesCsvProcess;
+- use Illuminate\Support\Facades\Storage;
+- use Illuminate\Support\Facades\Bus;
