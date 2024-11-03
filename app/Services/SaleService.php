@@ -3,8 +3,9 @@
 namespace App\Services;
 
 use App\Jobs\SalesCsvProcess;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\LazyCollection;
+use Illuminate\Support\Facades\Storage;
 
 class SaleService
 {
@@ -16,14 +17,12 @@ class SaleService
      */
     public function uploadCsv($file)
     {
+        // return $this -> processCSV($file);
         try {
-
             // method 1 - upload the file to storage folder and read the file
             // $filePath = $file->store('csv_uploads');
             // $fileData = Storage::path($filePath);
             // $fileData = file($fileData);
-
-
             // method 2 - retirieve the file data without saving it to storage
             $fileData = file($file);
 
@@ -40,8 +39,6 @@ class SaleService
                     unset($data[0]);
                 }
 
-                // Start The Job
-                // SalesCsvProcess::dispatch($data);
                 // add The Job to the batch
                 $batch->add(new SalesCsvProcess($data));
             }
@@ -50,6 +47,34 @@ class SaleService
             // throw $th;
             return ['status' => false,'message' => $th->getMessage()];
         }
+
+    }
+    /**
+     * processCSV function
+     *
+     * @param [type] $file
+     * @return void
+     */
+    public function processCSV($file){
+        $filePath = $file->store('csv_uploads');
+        $batch = Bus::batch([])->dispatch();
+        $jobs = [];
+        $chunkSize = 500;
+
+        LazyCollection::make(function () use ($filePath) {
+            $file = Storage::path($filePath);
+            return fopen($file, 'r');
+        })->chunk($chunkSize)->each(function ($lines) use (&$jobs) {
+            $data = $lines->map(function ($line) {
+                return str_getcsv($line);
+            })->toArray();
+
+            $jobs[] = new SalesCsvProcess($data);
+        });
+
+        $batch->add($jobs);
+
+        return ['status' => true, 'message' => 'CSV file has been uploaded successfully.', 'data' => $batch->id ?? null];
 
     }
     /**
@@ -63,7 +88,9 @@ class SaleService
             //code...
             return Bus::findBatch($batchId);
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            return null;
+
         }
     }
 }

@@ -33,8 +33,6 @@ class EmailService
                     unset($data[0]);
                 }
 
-                dd($data);
-
                 $batch->add(new SendEmailJob($data));
             }
 

@@ -5,19 +5,25 @@ namespace App\Http\Controllers;
 use App\Models\Sale;
 use Illuminate\Http\Request;
 use App\Services\SaleService;
+use Illuminate\Support\Collection;
 use App\Http\Requests\UploadSalesRequest;
 
 class SaleController extends Controller
 {
-
-    public function __construct(public SaleService $service){
-
-    }
+    /**
+     * __construct function
+     *
+     * @param SaleService $service
+     */
+    public function __construct(public SaleService $service){}
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
+
+        // $salesData = Sale::all();
+        // dd($salesData);
         return view('sales.index');
     }
 
@@ -49,7 +55,7 @@ class SaleController extends Controller
      */
     public function show(Sale $sale)
     {
-        //
+
     }
 
     /**
@@ -80,6 +86,9 @@ class SaleController extends Controller
     public function batch() {
         $batchId = request()->id;
         $batch = $this -> service -> getBatch($batchId);
+        if(!$batch)
+            return redirect()->route('sales.create')->with('error', 'Batch not found');
+
         return view('sales.batch-progress', compact('batch'));
     }
 }
