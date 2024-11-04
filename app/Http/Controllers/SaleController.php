@@ -6,6 +6,7 @@ use App\Models\Sale;
 use Illuminate\Http\Request;
 use App\Services\SaleService;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use App\Http\Requests\UploadSalesRequest;
 
 class SaleController extends Controller
@@ -21,9 +22,6 @@ class SaleController extends Controller
      */
     public function index()
     {
-
-        // $salesData = Sale::all();
-        // dd($salesData);
         return view('sales.index');
     }
 
@@ -40,7 +38,6 @@ class SaleController extends Controller
      */
     public function store(UploadSalesRequest $request)
     {
-
         $result = $this->service->uploadCsv(request()->sales_csv);
 
         if($result['status'])

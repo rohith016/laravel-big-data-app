@@ -27,7 +27,7 @@ class SaleService
 
             $batch = Bus::batch([])->dispatch();
 
-            $chunks = array_chunk($fileData, 500);
+            $chunks = array_chunk($fileData, 10000);
             $header = [];
             foreach($chunks as $key => $chunk) {
                 // Get File Content and save it as an array

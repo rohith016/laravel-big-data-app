@@ -43,10 +43,12 @@ class SalesCsvProcess implements ShouldQueue
                 'name' => $row[0],
                 'amount' => $row[1],
                 'description' => $row[2],
+                'created_at' => now(),
+                'updated_at' => now()
             ];
 
-            DB::table('sales')->insert($bulkInsert);
-            $bulkInsert = [];
         }
+
+        DB::table('sales')->insert($bulkInsert);
     }
 }
