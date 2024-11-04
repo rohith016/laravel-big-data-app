@@ -2,10 +2,17 @@
 
 namespace App\Services;
 
-use App\Jobs\SalesCsvProcess;
+use App\Jobs\{
+    SalesCsvProcess,
+    ExportCsvBatchProcess
+};
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\LazyCollection;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Sale;
+use App\Models\Notification;
+use Illuminate\Database\Eloquent\Collection;
+
 
 class SaleService
 {
@@ -99,5 +106,49 @@ class SaleService
             return null;
 
         }
+    }
+    /**
+     * exportSalesData function
+     *
+     * @return void
+     */
+    public function exportSalesData(){
+        $name = "app/public/".time()."exported_csv.csv";
+        $file = storage_path($name);
+        $fileHandle =  fopen($file, 'w');
+
+        fputcsv($fileHandle, [
+            "name",
+            "amount",
+            "description",
+        ]);
+
+        fclose($fileHandle);
+
+        // $batch = Bus::batch([])->dispatch();
+        $batch = Bus::batch([])->then(function ($batch) use ($file) {
+            // This code runs when the entire batch has finished processing
+
+            // Here you could send a notification or update the status
+            // $user = auth()->user();
+            // Notification::send($user, new FileReadyNotification($file));
+            Notification::create([
+                'notification' => 'csv exported',
+                'data' => $file
+            ]);
+
+
+            // Optionally, log or broadcast the completion event
+        })->catch(function ($batch, $exception) {
+            // Handle any errors that occur within the batch
+        })->dispatch();
+
+
+        Sale::chunk(10000, function ($dataChunk) use ($file, $batch) {
+            $batch->add(new ExportCsvBatchProcess($dataChunk, $file));
+        });
+
+
+        return $batch -> id;
     }
 }

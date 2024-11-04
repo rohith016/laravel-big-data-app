@@ -3,7 +3,8 @@
 use App\Http\Controllers\{
     SaleController,
     BulkEmailController,
-    ProfileController
+    ProfileController,
+    SalesExportController
 };
 use Illuminate\Support\Facades\Route;
 
@@ -25,6 +26,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('/sales', SaleController::class);
     Route::get('/batch/{id}', [SaleController::class, 'batch'])->name('sales.batch');
     Route::resource('/emails', BulkEmailController::class);
+
+    Route::get('/report', [SalesExportController::class, 'exporSalesData'])->name('sales.report');
 });
 
 require __DIR__.'/auth.php';
