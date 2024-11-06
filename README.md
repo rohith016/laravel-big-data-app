@@ -86,4 +86,12 @@ add code to controller, model, migration, request, route, job, views
 - use Illuminate\Support\Facades\Bus;
 
 
+## CQRS Pattern for getting sales data
+
+- php artisan make:class Queries/GetSalesByAttributesQuery
+
+- php artisan make:class Handlers/Queries/GetSalesByAttributesHandler
+
+- php artisan make:class Services/QueryBus
+
 ### https://www.mockaroo.com/

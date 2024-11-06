@@ -12,10 +12,31 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Sale;
 use App\Models\Notification;
 use Illuminate\Database\Eloquent\Collection;
-
+use App\Services\QueryBus;
+use App\Queries\GetSalesByAttributesQuery;
 
 class SaleService
 {
+    /**
+     * __construct function
+     *
+     * @param QueryBus $queryBus
+     */
+    public function __construct(
+        protected QueryBus $queryBus
+    ) {}
+    /**
+     * getSalesData function
+     *
+     * @param [type] $name
+     * @param [type] $amount
+     * @param [type] $description
+     * @return void
+     */
+    public function getSalesData($name = null, $amount = null, $description = null){
+        $query = new GetSalesByAttributesQuery($name, $amount, $description);
+        return $this->queryBus->dispatch($query);
+    }
     /**
      * uploadCsv function
      *

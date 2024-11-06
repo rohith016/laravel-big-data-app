@@ -20,6 +20,67 @@
                         {{ __('create sales') }}
                     </a>
 
+                    <br>
+                    <br>
+
+                    <form action="{{ route('sales.index') }}" method="get">
+                        <label for="">Search By Name :</label>
+                        <input type="text" name="name" id="name" value="{{ request()-> name}}" />
+                        <label for="">Search By Amount :</label>
+                        <input type="text" name="amount" id="amount" value="{{ request()-> amount}}" />
+                        <label for="">Search By Description :</label>
+                        <input type="text" name="description" id="description" value="{{ request()-> description}}" />
+
+                        <input type="submit" value="Search" />
+                    </form>
+
+                    <br>
+                    <br>
+
+                    <table class="table-auto w-full bg-white border-collapse">
+                        <thead>
+                            <tr>
+                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">
+                                    {{ __('ID') }}
+                                </th>
+                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">
+                                    {{ __('Name') }}
+                                </th>
+                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">
+                                    {{ __('Amount') }}
+                                </th>
+                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">
+                                    {{ __('Description') }}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($salesData as $sale)
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        {{ $sale->id }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        {{ $sale->name }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        {{ $sale->amount }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        {{ $sale->description }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+
+                    {{-- print pagination blade ui --}}
+
+                    <br>
+                    <br>
+
+                    {{ $salesData->links() }}
+
                 </div>
             </div>
         </div>

@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Sale;
 use Illuminate\Http\Request;
 use App\Services\SaleService;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use App\Http\Requests\UploadSalesRequest;
 
 class SaleController extends Controller
@@ -20,9 +18,10 @@ class SaleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('sales.index');
+        $salesData = $this->service->getSalesData($request->name, $request->amount, $request->description);
+        return view('sales.index', compact('salesData'));
     }
 
     /**
