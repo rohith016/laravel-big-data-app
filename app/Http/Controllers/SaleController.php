@@ -83,8 +83,11 @@ class SaleController extends Controller
     {
         //
     }
-
-
+    /**
+     * batch function
+     *
+     * @return void
+     */
     public function batch() {
         $batchId = request()->id;
         $batch = $this -> service -> getBatch($batchId);
