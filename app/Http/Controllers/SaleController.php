@@ -37,10 +37,16 @@ class SaleController extends Controller
      */
     public function store(UploadSalesRequest $request)
     {
-        $result = $this->service->uploadCsv(request()->sales_csv);
+        if($request->validated('type') == 'form') {
+            $result =  $this -> service -> createSalesRecord($request->validated('name'), $request->validated('amount'), $request->validated('description'));
+        } else if($request->validated('type') == 'file') {
+            $result = $this->service->uploadCsv(request()->sales_csv);
+        }
 
-        if($result['status'])
+        if($request->validated('type') == 'file' && $result['status'])
             return redirect(url('batch/'.$result['data']))->with('success', $result['message']);
+        else if ($request->validated('type') == 'form' && $result['status'])
+            return redirect()->back()->with('success', $result['message'] ?? "Success!");
         else
             return redirect()->back()->with('error', $result['message'] ?? "Failed");
 

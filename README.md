@@ -88,10 +88,42 @@ add code to controller, model, migration, request, route, job, views
 
 ## CQRS Pattern for getting sales data
 
+### for COMMAND
+
+- php artisan make:class Commands/CreateSalesCommand
+- php artisan make:class Handlers/Commands/CreateSalesCommandHandler
+- php artisan make:class Services/CommandBus
+
+```
+
+// App/Services/CommandBus
+
+
+
+public function dispatch($command)
+{
+    $handlerClass = str_replace('Commands', 'Handlers\Commands', get_class($command)) . 'Handler';
+    return app($handlerClass)->handle($command);
+}
+
+```
+
+### for QUERY
 - php artisan make:class Queries/GetSalesByAttributesQuery
-
-- php artisan make:class Handlers/Queries/GetSalesByAttributesHandler
-
+- php artisan make:class Handlers/Queries/GetSalesByAttributesQueryHandler
 - php artisan make:class Services/QueryBus
+
+```
+
+// App/Services/QueryBus
+
+
+public function dispatch($query)
+{
+    $handlerClass = str_replace('Queries', 'Handlers\Queries', get_class($query)) . 'Handler';
+    return app($handlerClass)->handle($query);
+}
+
+```
 
 ### https://www.mockaroo.com/

@@ -30,7 +30,7 @@ class GetSalesByAttributesQueryHandler
         });
 
 
-        return $saleQuery->paginate(10);
+        return $saleQuery->latest()->paginate(100);
 
     }
 }

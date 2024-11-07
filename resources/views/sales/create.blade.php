@@ -18,15 +18,53 @@
                         </div>
                     @endif
 
+                    @if (\Session::has('success'))
+                        <div class="alert alert-error">
+                            <ul>
+                                <li>{!! \Session::get('success') !!}</li>
+                            </ul>
+                        </div>
+                    @endif
+
+
 
                     <form method="post" action="{{route('sales.store')}}" enctype="multipart/form-data">
                         @csrf
 
+                        <select name="type" id="type">
+                            <option value="">Select Create Option</option>
+                            <option value="file" @if(old("type") == "file") selected @endif>File Upload</option>
+                            <option value="form" @if(old("type") == "form") selected @endif>Form Upload</option>
+                        </select>
+
+                        <br>
+                        <br>
+                        <hr>
+                        <br>
+                        <br>
                         <input type="file" name="sales_csv"  id="sales_csv" />
+                        <br>
+                        <br>
+                        <hr>
+                        <br>
+                        <br>
+                        <label for="">Name:</label>
+                        <input type="text" name="name" id="name" value="{{ old('name')}}" />
+                        <br>
+                        <br>
+                        <label for="">Amount:</label>
+                        <input type="text" name="amount" id="amount" value="{{ old('amount')}}" />
+                        <br>
+                        <br>
+                        <label for="">Description:</label>
+                        <input type="text" name="description" id="description" value="{{ old('description')}}" />
+                        <br>
+                        <br>
+                        {{-- <input type="submit" class="button" value="upload"> --}}
 
-
-
-                        <input type="submit" value="upload">
+                        <x-primary-button class="ms-3">
+                            {{ __('Upload') }}
+                        </x-primary-button>
 
                         @if ($errors->any())
                             <div class="alert alert-danger">

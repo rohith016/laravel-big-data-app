@@ -41,7 +41,7 @@
                         <thead>
                             <tr>
                                 <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">
-                                    {{ __('ID') }}
+                                    {{ __('SL NO.') }}
                                 </th>
                                 <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">
                                     {{ __('Name') }}
@@ -58,7 +58,7 @@
                             @foreach ($salesData as $sale)
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {{ $sale->id }}
+                                        {{ ++$loop->index }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                         {{ $sale->name }}

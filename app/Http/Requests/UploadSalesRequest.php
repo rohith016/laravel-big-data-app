@@ -22,7 +22,11 @@ class UploadSalesRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'sales_csv' => ['required', 'file','mimes:csv,xls,xlsx', 'max:10240']
+            'type' => ['required'],
+            'sales_csv' => ['required_if:type,file', 'file','mimes:csv,xls,xlsx', 'max:10240'],
+            'name' => ['required_if:type,form'],
+            'amount' => ['required_if:type,form'],
+            'description' => ['required_if:type,form'],
         ];
     }
 }

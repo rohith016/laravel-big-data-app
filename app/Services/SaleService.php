@@ -2,18 +2,24 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\LazyCollection;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Collection;
+use App\Queries\GetSalesByAttributesQuery;
+use App\Commands\CreateSalesCommand;
 use App\Jobs\{
     SalesCsvProcess,
     ExportCsvBatchProcess
 };
-use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\LazyCollection;
-use Illuminate\Support\Facades\Storage;
-use App\Models\Sale;
-use App\Models\Notification;
-use Illuminate\Database\Eloquent\Collection;
-use App\Services\QueryBus;
-use App\Queries\GetSalesByAttributesQuery;
+use App\Models\{
+    Sale,
+    Notification
+};
+use App\Services\{
+    QueryBus,
+    CommandBus
+};
 
 class SaleService
 {
@@ -23,7 +29,8 @@ class SaleService
      * @param QueryBus $queryBus
      */
     public function __construct(
-        protected QueryBus $queryBus
+        protected QueryBus $queryBus,
+        protected CommandBus $commandBus
     ) {}
     /**
      * getSalesData function
@@ -36,6 +43,24 @@ class SaleService
     public function getSalesData($name = null, $amount = null, $description = null){
         $query = new GetSalesByAttributesQuery($name, $amount, $description);
         return $this->queryBus->dispatch($query);
+    }
+    /**
+     * createSalesRecord function
+     *
+     * @param [type] $name
+     * @param [type] $amount
+     * @param [type] $description
+     * @return void
+     */
+    public function createSalesRecord($name = null, $amount = null, $description = null){
+        $command = new CreateSalesCommand($name, $amount, $description);
+        $saveStatus =  $this -> commandBus -> dispatch($command);
+
+        if($saveStatus)
+            return ['status' => true, "message" => "Success, sales record created"];
+        else
+            return ['status' => false, "message" => "failed to create sales record"];
+
     }
     /**
      * uploadCsv function
@@ -56,6 +81,9 @@ class SaleService
             $batch = Bus::batch([])->dispatch();
 
             $chunks = array_chunk($fileData, 10000);
+
+            dd(111);
+
             $header = [];
             foreach($chunks as $key => $chunk) {
                 // Get File Content and save it as an array
@@ -120,12 +148,10 @@ class SaleService
      */
     public function getBatch($batchId) {
         try {
-            //code...
             return Bus::findBatch($batchId);
         } catch (\Throwable $th) {
             // throw $th;
             return null;
-
         }
     }
     /**
