@@ -27,6 +27,7 @@ class SaleService
      * __construct function
      *
      * @param QueryBus $queryBus
+     * @param CommandBus $commandBus
      */
     public function __construct(
         protected QueryBus $queryBus,
@@ -81,8 +82,6 @@ class SaleService
             $batch = Bus::batch([])->dispatch();
 
             $chunks = array_chunk($fileData, 10000);
-
-            dd(111);
 
             $header = [];
             foreach($chunks as $key => $chunk) {
